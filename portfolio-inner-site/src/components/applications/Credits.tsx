@@ -19,6 +19,13 @@ const CREDITS = [
         ],
     },
     {
+        title: 'Desk Accessory Models',
+        rows: [
+            ['CreativeTrio', 'Desk Lamp (CC0)'],
+            ['Quaternius', 'Cat (CC0)'],
+        ],
+    },
+    {
         title: 'Sound Design',
         rows: [
             ['Henry Heffernan', 'Mixing, Composition, & Foley'],

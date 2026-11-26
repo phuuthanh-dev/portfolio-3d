@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Application from '../Application';
 import { CameraKey } from '../Camera/Camera';
 import portfolio from '@portfolio-config';
@@ -11,6 +12,7 @@ export default class DeskObjects {
     targets: { object: THREE.Object3D; action: () => void }[] = [];
     raycaster = new THREE.Raycaster();
     pressed: { action: () => void; x: number; y: number; pointerId: number } | null = null;
+    mixers: THREE.AnimationMixer[] = [];
 
     constructor() {
         this.application = new Application();
@@ -24,6 +26,7 @@ export default class DeskObjects {
         this.addButton('Experience', 'Open experience from the notebook', new THREE.Vector3(-1620, 0, -120), () => this.navigate('/experience'));
         // The printed CV is already part of the original desk model.
         this.addButton('View CV', 'Open the resume', new THREE.Vector3(-2050, -410, 980), () => this.openResume());
+        this.loadDeskExtras();
     }
 
     box(width: number, height: number, depth: number, color: number) {
@@ -121,7 +124,7 @@ export default class DeskObjects {
         document.addEventListener('pointercancel', () => { this.pressed = null; }, true);
     }
 
-    addButton(label: string, accessibleLabel: string, position: THREE.Vector3, action: () => void) {
+    addButton(label: string, accessibleLabel: string, position: THREE.Vector3, action: () => void): HTMLButtonElement {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'desk-object-button';
@@ -138,6 +141,126 @@ export default class DeskObjects {
         });
         document.body.appendChild(button);
         this.buttons.push({ button, position });
+        return button;
+    }
+
+    /** Load decorative assets independently so a failed optional model cannot block startup. */
+    loadDeskExtras() {
+        const loader = new GLTFLoader();
+        const addModel = (
+            name: string,
+            position: THREE.Vector3,
+            height: number,
+            setup: (group: THREE.Group, gltf: GLTF) => void
+        ) => {
+            loader.load(`/models/DeskExtras/${name}.glb`, (gltf) => {
+                // The original scene uses baked, unlit materials rather than scene lights.
+                // Preserve the supplied colors/textures while matching that rendering style.
+                gltf.scene.traverse((child) => {
+                    if (!(child instanceof THREE.Mesh)) return;
+                    const convert = (material: THREE.Material) => {
+                        const original = material as THREE.MeshStandardMaterial;
+                        const basic = new THREE.MeshBasicMaterial({
+                            color: original.color ? original.color.clone() : 0xffffff,
+                            map: original.map || null,
+                            vertexColors: original.vertexColors,
+                            transparent: original.transparent,
+                            opacity: original.opacity,
+                            alphaTest: original.alphaTest,
+                            side: original.side,
+                        });
+                        return basic;
+                    };
+                    child.material = Array.isArray(child.material)
+                        ? child.material.map(convert)
+                        : convert(child.material);
+                });
+                gltf.scene.updateMatrixWorld(true);
+                const bounds = new THREE.Box3().setFromObject(gltf.scene);
+                const size = bounds.getSize(new THREE.Vector3());
+                if (!Number.isFinite(size.y) || size.y <= 0) return;
+                const factor = height / size.y;
+                gltf.scene.scale.multiplyScalar(factor);
+                gltf.scene.updateMatrixWorld(true);
+                const normalized = new THREE.Box3().setFromObject(gltf.scene);
+                const center = normalized.getCenter(new THREE.Vector3());
+                // Center the model and put its base on the desk regardless of source pivot.
+                gltf.scene.position.sub(new THREE.Vector3(center.x, normalized.min.y, center.z));
+                const group = new THREE.Group();
+                group.position.copy(position);
+                group.add(gltf.scene);
+                this.scene.add(group);
+                setup(group, gltf);
+            }, undefined, () => console.warn(`Could not load optional desk model: ${name}`));
+        };
+
+        const deskTop = -451;
+        addModel('lamp', new THREE.Vector3(-1850, deskTop, 600), 700, (group) => {
+            // A subtle radial pool creates a readable on/off effect on baked surfaces.
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = 128;
+            const context = canvas.getContext('2d');
+            if (context) {
+                const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
+                gradient.addColorStop(0, 'rgba(255, 221, 147, 0.65)');
+                gradient.addColorStop(1, 'rgba(255, 221, 147, 0)');
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, 128, 128);
+            }
+            const glow = new THREE.Mesh(
+                new THREE.PlaneGeometry(1000, 1000),
+                new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(canvas), transparent: true, depthWrite: false, opacity: 0.6 })
+            );
+            glow.rotation.x = -Math.PI / 2;
+            glow.position.set(-1670, deskTop + 6, 590);
+            this.scene.add(glow);
+            const buttonPosition = group.position.clone().add(new THREE.Vector3(-210, 760, 0));
+            let isOn = true;
+            let button: HTMLButtonElement;
+            const toggle = () => {
+                isOn = !isOn;
+                glow.visible = isOn;
+                button.textContent = isOn ? 'Lamp: on' : 'Lamp: off';
+                button.setAttribute('aria-pressed', String(isOn));
+            };
+            button = this.addButton('Lamp: on', 'Toggle desk lamp', buttonPosition, toggle);
+            button.setAttribute('aria-pressed', 'true');
+            this.targets.push({ object: group, action: toggle });
+        });
+
+        addModel('cat', new THREE.Vector3(1210, deskTop, 580), 330, (group, gltf) => {
+            const mixer = new THREE.AnimationMixer(gltf.scene);
+            // The exported animation names include an armature prefix.
+            const idleClip = gltf.animations.find((clip) => clip.name.toLowerCase().split('|').pop() === 'idle');
+            const yesClip = gltf.animations.find((clip) => clip.name.toLowerCase().split('|').pop() === 'headbutt');
+            const idle = idleClip ? mixer.clipAction(idleClip) : null;
+            const yes = yesClip ? mixer.clipAction(yesClip) : null;
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (idle && !reduceMotion) idle.play();
+            if (yes) {
+                yes.setLoop(THREE.LoopOnce, 1);
+                yes.clampWhenFinished = true;
+                mixer.addEventListener('finished', (event) => {
+                    if (event.action !== yes || reduceMotion) return;
+                    yes.stop();
+                    idle?.reset().play();
+                });
+            }
+            this.mixers.push(mixer);
+            let resetTimer: number | undefined;
+            let button: HTMLButtonElement;
+            const pet = () => {
+                if (yes && !reduceMotion) {
+                    idle?.stop();
+                    yes.reset().play();
+                }
+                button.textContent = 'Meow!';
+                window.clearTimeout(resetTimer);
+                resetTimer = window.setTimeout(() => { button.textContent = 'Pet cat'; }, 1600);
+            };
+            button = this.addButton('Pet cat', 'Pet the desk cat', group.position.clone().add(new THREE.Vector3(0, 390, 0)), pet);
+            this.targets.push({ object: group, action: pet });
+        });
     }
 
     navigate(path: '/about' | '/experience') {
@@ -157,6 +280,7 @@ export default class DeskObjects {
     }
 
     update() {
+        this.mixers.forEach((mixer) => mixer.update(Math.min(this.application.time.delta / 1000, 0.1)));
         const camera = this.application.camera;
         const showing = !camera.freeCam && camera.currentKeyframe === CameraKey.DESK;
         const vector = new THREE.Vector3();
