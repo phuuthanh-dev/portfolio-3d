@@ -38,6 +38,9 @@ const HelpPrompt: React.FC<HelpPromptProps> = () => {
         UIEventBus.on('enterMonitor', () => {
             setVisible(false);
         });
+        UIEventBus.on('enterCarDisplay', () => {
+            setVisible(false);
+        });
     }, []);
 
     useEffect(() => {

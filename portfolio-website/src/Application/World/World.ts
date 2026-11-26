@@ -7,6 +7,7 @@ import Decor from './Decor';
 import CoffeeSteam from './CoffeeSteam';
 import Cursor from './Cursor';
 import DeskObjects from './DeskObjects';
+import CarDisplay from './CarDisplay';
 import AudioManager from '../Audio/AudioManager';
 export default class World {
     application: Application;
@@ -22,6 +23,7 @@ export default class World {
     cursor: Cursor;
     audioManager: AudioManager;
     deskObjects: DeskObjects;
+    carDisplay: CarDisplay;
 
     constructor() {
         this.application = new Application();
@@ -37,6 +39,7 @@ export default class World {
             this.coffeeSteam = new CoffeeSteam();
             this.audioManager = new AudioManager();
             this.deskObjects = new DeskObjects();
+            this.carDisplay = new CarDisplay();
             // this.cursor = new Cursor();
         });
     }

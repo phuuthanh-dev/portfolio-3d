@@ -140,6 +140,19 @@ const InfoOverlay: React.FC<InfoOverlayProps> = ({ visible }) => {
                     )}
                 </div>
             )}
+            {textDone && (
+                <a
+                    href="/car-model-credits.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    id="prevent-click"
+                    onMouseDown={(event) => event.stopPropagation()}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    style={{ ...styles.container, color: 'white', fontFamily: 'monospace', fontSize: 12 }}
+                >
+                    Car model credits ↗
+                </a>
+            )}
         </div>
     );
 };

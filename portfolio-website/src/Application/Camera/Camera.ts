@@ -15,6 +15,7 @@ import {
     IdleKeyframe,
     LoadingKeyframe,
     DeskKeyframe,
+    CarDisplayKeyframe,
     OrbitControlsStart,
 } from './CameraKeyframes';
 
@@ -23,6 +24,7 @@ export enum CameraKey {
     MONITOR = 'monitor',
     LOADING = 'loading',
     DESK = 'desk',
+    CAR_DISPLAY = 'carDisplay',
     ORBIT_CONTROLS_START = 'orbitControlsStart',
 }
 export default class Camera extends EventEmitter {
@@ -43,6 +45,9 @@ export default class Camera extends EventEmitter {
     currentKeyframe: CameraKey | undefined;
     targetKeyframe: CameraKey | undefined;
     keyframes: { [key in CameraKey]: CameraKeyframeInstance };
+    private carDisplayBackButton: HTMLButtonElement;
+    private beforeCarDisplay: CameraKey = CameraKey.IDLE;
+    private leavingCarDisplay = false;
 
     constructor() {
         super();
@@ -63,10 +68,12 @@ export default class Camera extends EventEmitter {
             monitor: new MonitorKeyframe(),
             loading: new LoadingKeyframe(),
             desk: new DeskKeyframe(),
+            carDisplay: new CarDisplayKeyframe(),
             orbitControlsStart: new OrbitControlsStart(),
         };
 
         document.addEventListener('mousedown', (event) => {
+            if (this.leavingCarDisplay) return;
             event.preventDefault();
             // @ts-ignore
             if (event.target.id === 'prevent-click') return;
@@ -88,6 +95,7 @@ export default class Camera extends EventEmitter {
         this.setInstance();
         this.setMonitorListeners();
         this.setFreeCamListeners();
+        this.setCarDisplayListeners();
     }
 
     transition(
@@ -136,6 +144,7 @@ export default class Camera extends EventEmitter {
 
     setMonitorListeners() {
         this.on('enterMonitor', () => {
+            if (this.isViewingCarDisplay() || this.leavingCarDisplay) return;
             this.transition(
                 CameraKey.MONITOR,
                 2000,
@@ -144,13 +153,95 @@ export default class Camera extends EventEmitter {
             UIEventBus.dispatch('enterMonitor', {});
         });
         this.on('leftMonitor', () => {
+            if (this.isViewingCarDisplay() || this.leavingCarDisplay) return;
             this.transition(CameraKey.DESK);
             UIEventBus.dispatch('leftMonitor', {});
         });
     }
 
+    private isViewingCarDisplay() {
+        return this.currentKeyframe === CameraKey.CAR_DISPLAY || this.targetKeyframe === CameraKey.CAR_DISPLAY;
+    }
+
+    /** Project the cabinet's actual world bounds into the viewport. */
+    private isPointInCarDisplay(x: number, y: number): boolean {
+        const display = this.application.world?.carDisplay;
+        if (!display) return false;
+        const box = display.getInteractionBounds();
+        const min = new THREE.Vector2(Infinity, Infinity);
+        const max = new THREE.Vector2(-Infinity, -Infinity);
+        for (const px of [box.min.x, box.max.x]) {
+            for (const py of [box.min.y, box.max.y]) {
+                for (const pz of [box.min.z, box.max.z]) {
+                    const point = new THREE.Vector3(px, py, pz).project(this.instance);
+                    if (point.z < -1 || point.z > 1) continue;
+                    const sx = (point.x + 1) * this.sizes.width / 2;
+                    const sy = (1 - point.y) * this.sizes.height / 2;
+                    min.min(new THREE.Vector2(sx, sy));
+                    max.max(new THREE.Vector2(sx, sy));
+                }
+            }
+        }
+        // A small forgiving margin avoids accidental exits near the wood frame.
+        const margin = 12;
+        return x >= min.x - margin && x <= max.x + margin &&
+            y >= min.y - margin && y <= max.y + margin;
+    }
+
+    private setCarDisplayListeners() {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'desk-object-button';
+        button.textContent = '← Back';
+        button.setAttribute('aria-label', 'Leave car display and return to the previous view');
+        button.hidden = true;
+        button.style.left = '110px';
+        button.style.top = 'calc(100% - 42px)';
+        button.addEventListener('mousedown', (event) => event.stopPropagation());
+        button.addEventListener('pointerdown', (event) => event.stopPropagation());
+        const leave = () => {
+            if (!this.isViewingCarDisplay()) return;
+            button.hidden = true;
+            this.leavingCarDisplay = true;
+            this.transition(this.beforeCarDisplay, 1000, undefined, () => {
+                this.leavingCarDisplay = false;
+            });
+        };
+        button.addEventListener('click', (event) => { event.stopPropagation(); leave(); });
+        document.body.appendChild(button);
+        this.carDisplayBackButton = button;
+
+        this.on('enterCarDisplay', () => {
+            if (this.freeCam || this.isViewingCarDisplay() || this.leavingCarDisplay) return;
+            this.beforeCarDisplay = this.currentKeyframe === CameraKey.DESK || this.targetKeyframe === CameraKey.DESK
+                ? CameraKey.DESK : CameraKey.IDLE;
+            // Responsive camera keyframe needs to be current before tween starts.
+            this.keyframes.carDisplay.update();
+            UIEventBus.dispatch('enterCarDisplay', {});
+            button.hidden = false;
+            this.transition(CameraKey.CAR_DISPLAY, 1200);
+        });
+        document.addEventListener('pointermove', (event) => {
+            // Touch has no hover; touch and keyboard users keep Back and Escape.
+            if (event.pointerType !== 'mouse') return;
+            if (this.currentKeyframe !== CameraKey.CAR_DISPLAY || this.leavingCarDisplay || event.buttons) return;
+            // Only respond to an actual mouse movement after zoom has completed.
+            // The pointer may land outside the projected cabinet as the camera
+            // moves, so do not require a separate move into it before exiting.
+            if (!this.isPointInCarDisplay(event.clientX, event.clientY)) leave();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && this.isViewingCarDisplay()) {
+                event.preventDefault();
+                leave();
+            }
+        });
+    }
+
     setFreeCamListeners() {
         UIEventBus.on('freeCamToggle', (toggle: boolean) => {
+            if (this.carDisplayBackButton) this.carDisplayBackButton.hidden = true;
+            this.leavingCarDisplay = false;
             // if (toggle === this.freeCam) return;
             if (toggle) {
                 this.transition(

@@ -30,6 +30,10 @@ const keys: { [key in CameraKey]: CameraKeyframe } = {
         position: new THREE.Vector3(0, 1800, 5500),
         focalPoint: new THREE.Vector3(0, 500, 0),
     },
+    carDisplay: {
+        position: new THREE.Vector3(-4725, -400, 5250),
+        focalPoint: new THREE.Vector3(-4725, -850, -1750),
+    },
     loading: {
         position: new THREE.Vector3(-35000, 35000, 35000),
         focalPoint: new THREE.Vector3(0, -5000, 0),
@@ -72,6 +76,22 @@ export class LoadingKeyframe extends CameraKeyframeInstance {
     update() {}
 }
 
+/** Frame the full cabinet at both desktop and narrow mobile aspect ratios. */
+export class CarDisplayKeyframe extends CameraKeyframeInstance {
+    private sizes: Sizes;
+
+    constructor() {
+        super(keys.carDisplay);
+        this.sizes = new Application().sizes;
+    }
+
+    update() {
+        const aspect = this.sizes.width / Math.max(this.sizes.height, 1);
+        const distance = Math.max(7000, 3800 / (2 * Math.tan(17.5 * THREE.MathUtils.DEG2RAD) * aspect));
+        this.position.z = this.focalPoint.z + distance;
+    }
+}
+
 export class DeskKeyframe extends CameraKeyframeInstance {
     origin: THREE.Vector3;
     application: Application;
@@ -92,13 +112,17 @@ export class DeskKeyframe extends CameraKeyframeInstance {
     }
 
     update() {
+        // Give the left edge of the desk a wider range so the car cabinet
+        // beside it can be explored without changing the normal right view.
+        const horizontalOffset = this.mouse.x - this.sizes.width / 2;
+        const deskPanX = horizontalOffset - Math.max(0, -horizontalOffset) * 1.3;
         this.targetFoc.x +=
-            (this.mouse.x - this.sizes.width / 2 - this.targetFoc.x) * 0.05;
+            (deskPanX - this.targetFoc.x) * 0.05;
         this.targetFoc.y +=
             (-(this.mouse.y - this.sizes.height) - this.targetFoc.y) * 0.05;
 
         this.targetPos.x +=
-            (this.mouse.x - this.sizes.width / 2 - this.targetPos.x) * 0.025;
+            (deskPanX - this.targetPos.x) * 0.025;
         this.targetPos.y +=
             (-(this.mouse.y - this.sizes.height * 2) - this.targetPos.y) *
             0.025;
