@@ -78,11 +78,8 @@ const About: React.FC = () => {
                         <h3>Tools &amp; Projects</h3>
                         <br />
                         <p>
-                            On the frontend, I work with React, Next.js, TypeScript and JavaScript, as well as
-                            React Native and Expo for mobile experiences. For backend work, my toolkit includes
-                            Java, Spring Boot and Node.js, with REST APIs, WebSocket and JWT used where a project
-                            calls for them. I've also worked with SQL Server, MongoDB and MySQL, alongside Docker,
-                            CI/CD, Vercel and Railway for delivery.
+                            My toolkit spans frontend, backend and delivery.{' '}
+                            {profile.skills.map(skill => `${skill.category}: ${skill.items.join(', ')}.`).join(' ')}
                         </p>
                         <br />
                         <p>

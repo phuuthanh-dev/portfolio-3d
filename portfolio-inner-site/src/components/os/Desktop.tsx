@@ -12,6 +12,9 @@ import Scrabble from '../applications/Scrabble';
 import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
 import { MyPortfolio, VietAuction, Fluxora, RrLivestream } from '../applications/ProjectLauncher';
+import ProjectsExplorer from '../applications/ProjectsExplorer';
+import Terminal from '../applications/Terminal';
+import { parentNavigationPath } from './parentNavigation';
 
 export interface DesktopProps {}
 
@@ -37,6 +40,18 @@ const APPLICATIONS: {
         shortcutIcon: 'showcaseIcon',
         component: ShowcaseExplorer,
     },
+    projectsExplorer: {
+        key: 'projectsExplorer',
+        name: 'Projects Explorer',
+        shortcutIcon: 'projectsExplorerIcon',
+        component: ProjectsExplorer,
+    },
+    terminal: {
+        key: 'terminal',
+        name: 'Terminal',
+        shortcutIcon: 'terminalIcon',
+        component: Terminal,
+    },
     trail: {
         key: 'trail',
         name: 'The Oregon Trail',
@@ -57,7 +72,7 @@ const APPLICATIONS: {
     },
     henordle: {
         key: 'henordle',
-        name: 'Thanh-dle',
+        name: 'Pixel Word',
         shortcutIcon: 'thanhdleIcon',
         component: Henordle,
     },
@@ -235,6 +250,34 @@ const Desktop: React.FC<DesktopProps> = (props) => {
         },
         []
     );
+
+    useEffect(() => {
+        const handleParentNavigation = (event: MessageEvent) => {
+            const path = parentNavigationPath(event, document.referrer, window.parent, window);
+            if (!path) return;
+            // BrowserRouter observes popstate if open; a newly mounted window reads the URL.
+            window.history.pushState({}, '', path);
+            window.dispatchEvent(new PopStateEvent('popstate'));
+            setWindows((previous) => {
+                const top = Math.max(0, ...Object.values(previous).map(item => item.zIndex)) + 1;
+                const current = previous.showcase;
+                return {
+                    ...previous,
+                    showcase: current ? { ...current, minimized: false, zIndex: top } : {
+                        component: <ShowcaseExplorer onInteract={() => onWindowInteract('showcase')}
+                            onMinimize={() => minimizeWindow('showcase')}
+                            onClose={() => removeWindow('showcase')} />,
+                        name: APPLICATIONS.showcase.name,
+                        icon: APPLICATIONS.showcase.shortcutIcon,
+                        minimized: false,
+                        zIndex: top,
+                    },
+                };
+            });
+        };
+        window.addEventListener('message', handleParentNavigation);
+        return () => window.removeEventListener('message', handleParentNavigation);
+    }, [minimizeWindow, onWindowInteract, removeWindow]);
 
     return !shutdown ? (
         <div style={styles.desktop}>

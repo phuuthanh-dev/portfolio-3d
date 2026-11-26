@@ -15,6 +15,35 @@ body {
     outline: none;
 }
 
+/* Controls track the projected desk objects and remain keyboard accessible. */
+.desk-object-button {
+    position: fixed;
+    z-index: 20;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(255, 255, 255, .9);
+    background: rgba(15, 22, 21, .88);
+    color: #fff;
+    padding: 5px 9px;
+    font: 12px monospace;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .15s ease, transform .15s ease;
+}
+
+.desk-object-button:hover,
+.desk-object-button:focus-visible {
+    background: #2e7566;
+    outline: 2px solid white;
+    outline-offset: 3px;
+    transform: translate(-50%, -50%) scale(1.06);
+}
+
+.desk-object-button[hidden] { display: none; }
+
+@media (max-width: 768px) {
+    .desk-object-button { min-height: 36px; padding: 6px 9px; font-size: 11px; }
+}
+
 .jitter {
     animation-duration: 0.3s;
     animation-timing-function: ease-in-out;

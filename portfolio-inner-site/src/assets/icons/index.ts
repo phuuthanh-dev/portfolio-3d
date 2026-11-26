@@ -9,6 +9,8 @@ import myComputer from './myComputer.png';
 import showcaseIcon from './showcaseTp.svg';
 import doomIcon from './doomIcon.png';
 import thanhdleIcon from './thanhdleIcon.svg';
+import terminalIcon from './terminalIcon.svg';
+import projectsExplorerIcon from './projectsExplorerIcon.svg';
 import myPortfolioIcon from './showcaseTp.svg';
 import vietAuctionIcon from './vietAuctionIcon.svg';
 import fluxoraIcon from './fluxora-brand.svg';
@@ -37,6 +39,8 @@ const icons = {
     credits: credits,
     scrabbleIcon: scrabbleIcon,
     thanhdleIcon: thanhdleIcon,
+    terminalIcon: terminalIcon,
+    projectsExplorerIcon: projectsExplorerIcon,
     myPortfolioIcon: myPortfolioIcon,
     vietAuctionIcon: vietAuctionIcon,
     fluxoraIcon: fluxoraIcon,

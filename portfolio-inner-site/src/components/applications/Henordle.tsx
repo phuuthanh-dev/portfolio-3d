@@ -18,7 +18,7 @@ const HenordleApp: React.FC<HenordleAppProps> = (props) => {
             width={width}
             height={height}
             windowBarIcon="windowGameIcon"
-            windowTitle="Thanh-dle"
+            windowTitle="Pixel Word"
             closeWindow={props.onClose}
             onInteract={props.onInteract}
             minimizeWindow={props.onMinimize}

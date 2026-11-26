@@ -6,7 +6,7 @@ import Environment from './Environment';
 import Decor from './Decor';
 import CoffeeSteam from './CoffeeSteam';
 import Cursor from './Cursor';
-import Hitboxes from './Hitboxes';
+import DeskObjects from './DeskObjects';
 import AudioManager from '../Audio/AudioManager';
 export default class World {
     application: Application;
@@ -21,6 +21,7 @@ export default class World {
     coffeeSteam: CoffeeSteam;
     cursor: Cursor;
     audioManager: AudioManager;
+    deskObjects: DeskObjects;
 
     constructor() {
         this.application = new Application();
@@ -35,7 +36,7 @@ export default class World {
             this.monitorScreen = new MonitorScreen();
             this.coffeeSteam = new CoffeeSteam();
             this.audioManager = new AudioManager();
-            // const hb = new Hitboxes();
+            this.deskObjects = new DeskObjects();
             // this.cursor = new Cursor();
         });
     }
@@ -45,5 +46,6 @@ export default class World {
         if (this.environment) this.environment.update();
         if (this.coffeeSteam) this.coffeeSteam.update();
         if (this.audioManager) this.audioManager.update();
+        if (this.deskObjects) this.deskObjects.update();
     }
 }

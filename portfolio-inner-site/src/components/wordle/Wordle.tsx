@@ -245,14 +245,14 @@ const Wordle: React.FC<WordleProps> = ({ isForeground = true }) => {
     }, [gameOver, handleKey, isForeground]);
 
     return (
-        <div ref={gameRef} role="region" aria-label="Thanh-dle game" tabIndex={0} style={styles.container}
+        <div ref={gameRef} role="region" aria-label="Pixel Word game" tabIndex={0} style={styles.container}
             onMouseDown={(event) => {
                 if (!(event.target as HTMLElement).closest('button')) {
                     gameRef.current?.focus({ preventScroll: true });
                 }
             }}>
             <div style={styles.header}>
-                <h2>Thanh-dle</h2>
+                <h2>Pixel Word</h2>
                 <p style={styles.instruction}>Type five letters and press Enter; each guess fills the next row.</p>
                 <p style={styles.instruction}><span style={{ color: '#256b28' }}>Green</span>: correct spot · <span style={{ color: '#8a6500' }}>Yellow</span>: wrong spot · <span style={{ color: '#666' }}>Gray</span>: not matched.</p>
                 <p style={styles.instruction}>Any five letters are accepted. Six attempts.</p>

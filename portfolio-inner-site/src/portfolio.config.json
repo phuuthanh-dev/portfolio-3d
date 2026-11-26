@@ -8,6 +8,11 @@
     "facebook": "https://www.facebook.com/thanhphg89/",
     "cv": "/cv-phunghuuthanh.pdf",
     "about": "I build full-stack products across business operations, analytics, real-time communication, and mobile experiences. My work connects clear user interfaces with dependable APIs, data models, automation, and deployment workflows.",
+    "skills": [
+      { "category": "Frontend & mobile", "items": ["React", "Next.js", "TypeScript", "JavaScript", "React Native", "Expo"] },
+      { "category": "Backend & systems", "items": ["Java", "Spring Boot", "Node.js", "REST APIs", "WebSocket", "JWT"] },
+      { "category": "Data & delivery", "items": ["SQL Server", "MongoDB", "MySQL", "Docker", "CI/CD", "Vercel", "Railway"] }
+    ],
     "experience": [
       {
         "company": "DElements Media",
@@ -48,6 +53,10 @@
   },
   "desktopApps": {
     "myPortfolio": {
+      "name": "my-portfolio",
+      "category": "Personal Portfolio · Web",
+      "description": "A personal portfolio showcasing Thanh Phung's work, experience, and technical skills.",
+      "image": "/portfolio-projects/my-portfolio-banner.png",
       "website": "https://phuuthanh-portfolio.vercel.app/",
       "source": "https://github.com/phuuthanh-dev/my-portfolio",
       "localPreview": "http://localhost:3001/"

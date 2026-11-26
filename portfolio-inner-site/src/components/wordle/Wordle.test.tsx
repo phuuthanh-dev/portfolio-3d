@@ -63,7 +63,7 @@ it('accepts the on-screen keyboard and prevents input after six guesses', () => 
 
 it('focuses the embedded game and accepts physical Enter after virtual keyboard input', () => {
     render(<Wordle />);
-    const game = screen.getByRole('region', { name: 'Thanh-dle game' });
+    const game = screen.getByRole('region', { name: 'Pixel Word game' });
     expect(game).toHaveFocus();
     const firstKey = screen.getByRole('button', { name: 'H' });
     firstKey.focus();
@@ -79,7 +79,7 @@ it('focuses the embedded game and accepts physical Enter after virtual keyboard 
 
 it('stops listening when the player interacts with another window and resumes on game click', () => {
     render(<><button>Another window</button><Wordle /></>);
-    const game = screen.getByRole('region', { name: 'Thanh-dle game' });
+    const game = screen.getByRole('region', { name: 'Pixel Word game' });
     fireEvent.mouseDown(screen.getByRole('button', { name: 'Another window' }));
     fireEvent.keyDown(window, { key: 'h' });
     expect(screen.getAllByTestId('guess-row')[0]).toHaveTextContent('');
@@ -91,7 +91,7 @@ it('stops listening when the player interacts with another window and resumes on
 
 it('does not intercept keys while minimized and restores focus when foregrounded', () => {
     const { rerender } = render(<Wordle isForeground />);
-    const game = screen.getByRole('region', { name: 'Thanh-dle game' });
+    const game = screen.getByRole('region', { name: 'Pixel Word game' });
     expect(game).toHaveFocus();
     rerender(<Wordle isForeground={false} />);
     expect(game).not.toHaveFocus();

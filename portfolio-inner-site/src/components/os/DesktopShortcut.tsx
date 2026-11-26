@@ -93,6 +93,15 @@ const DesktopShortcut: React.FC<DesktopShortcutProps> = ({
             id={`${shortcutId}`}
             style={Object.assign({}, styles.appShortcut, scaledStyle)}
             onMouseDown={handleClickShortcut}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open ${shortcutName}`}
+            onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onOpen();
+                }
+            }}
             ref={containerRef}
         >
             <div id={`${shortcutId}`} style={styles.iconContainer}>
@@ -108,7 +117,7 @@ const DesktopShortcut: React.FC<DesktopShortcutProps> = ({
                         }
                     )}
                 />
-                <Icon icon={icon} style={styles.icon} size={['thanhdleIcon', 'showcaseIcon', 'myPortfolioIcon', 'vietAuctionIcon', 'fluxoraIcon', 'rrLivestreamIcon'].includes(icon) ? 32 : undefined} />
+                <Icon icon={icon} style={styles.icon} size={['thanhdleIcon', 'terminalIcon', 'projectsExplorerIcon', 'showcaseIcon', 'myPortfolioIcon', 'vietAuctionIcon', 'fluxoraIcon', 'rrLivestreamIcon'].includes(icon) ? 32 : undefined} />
             </div>
             <div
                 className={
