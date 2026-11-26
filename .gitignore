@@ -1,0 +1,12 @@
+node_modules/
+build/
+.next/
+.vercel/
+.env
+.env.local
+.env.*.local
+.env.production
+*.log
+.DS_Store
+/portfolio-inner-site/public/favicon.ico
+/portfolio-inner-site/public/digger.jsdos

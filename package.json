@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-local",
+  "private": true,
+  "scripts": {
+    "install:projects": "npm ci --prefix portfolio-website && npm ci --prefix portfolio-inner-site",
+    "dev": "concurrently --kill-others --names website,inner --prefix-colors cyan,magenta \"npm run dev --prefix portfolio-website\" \"npm start --prefix portfolio-inner-site\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

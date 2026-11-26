@@ -1,0 +1,133 @@
+{
+  "profile": {
+    "name": "Thanh Phung",
+    "title": "Software Engineer",
+    "email": "phuuthanh2003@gmail.com",
+    "github": "https://github.com/phuuthanh-dev",
+    "linkedin": "https://www.linkedin.com/in/phthanh0908/",
+    "facebook": "https://www.facebook.com/thanhphg89/",
+    "cv": "/cv-phunghuuthanh.pdf",
+    "about": "I build full-stack products across business operations, analytics, real-time communication, and mobile experiences. My work connects clear user interfaces with dependable APIs, data models, automation, and deployment workflows.",
+    "experience": [
+      {
+        "company": "DElements Media",
+        "role": "Software Engineer",
+        "period": "March 2026 - Present",
+        "location": "Ho Chi Minh City, Viet Nam",
+        "summary": "At DElements Media, I build and maintain software that supports the daily operations around livestreams, staffing and business workflows. My work connects the interfaces people use with the data and integrations behind them.",
+        "highlights": [
+          "Built and maintained a livestream operations platform used by approximately 100 users to coordinate staff scheduling, availability, payroll and live sessions.",
+          "Developed internal automation workflows for recruitment, contracts and payroll, including synchronization with Google Workspace.",
+          "Built the Blog and Account interfaces for the Root Rotation e-commerce website."
+        ]
+      },
+      {
+        "company": "FPT Software",
+        "role": "Software Engineer Intern",
+        "period": "September 2024 - December 2024",
+        "location": "Ho Chi Minh City, Viet Nam",
+        "summary": "During my internship at FPT Software, I worked with a software engineering team on internal application features and the data and API layers that support them.",
+        "highlights": [
+          "Designed MongoDB data models and implemented CRUD workflows for internal application features.",
+          "Supported the development and maintenance of RESTful APIs as part of a software engineering team."
+        ]
+      }
+    ],
+    "aboutImages": [
+      {
+        "caption": "A childhood photograph.",
+        "src": "/about/childhood-new.png",
+        "alt": "A child in a yellow striped shirt seated on a wooden bench."
+      },
+      {
+        "caption": "Portrait of Thanh Phung.",
+        "src": "/about/portrait.jpg",
+        "alt": "Thanh Phung wearing a white T-shirt."
+      }
+    ]
+  },
+  "desktopApps": {
+    "myPortfolio": {
+      "website": "https://phuuthanh-portfolio.vercel.app/",
+      "source": "https://github.com/phuuthanh-dev/my-portfolio",
+      "localPreview": "http://localhost:3001/"
+    }
+  },
+  "projects": [
+    {
+      "name": "VietAuction",
+      "category": "Digital Asset Auction · Web Platform",
+      "description": "A polished auction marketplace for discovering curated assets, reviewing listings transparently, and joining live bidding sessions.",
+      "image": "/portfolio-projects/vietauction-landing.png",
+      "links": [
+        {
+          "label": "Live product",
+          "url": "https://vietauction.vercel.app/",
+          "enabled": false,
+          "note": "HTTP 404 when checked on 2026-11-26; hidden until updated."
+        },
+        {
+          "label": "Source",
+          "url": "https://github.com/vietauction"
+        }
+      ],
+      "introduction": [
+        "VietAuction is an online auction marketplace designed around discovering digital assets, reviewing listings and taking part in live bidding. The project brings those steps into a single web experience, giving visitors a clear starting point to explore the assets available and understand the auction they are considering.",
+        "An auction involves more than showing an item and a price: visitors need to find relevant listings, examine the available information and follow the bidding experience. VietAuction brings these activities together in a focused interface, presenting the marketplace as a place to discover and participate rather than a collection of disconnected pages."
+      ],
+      "caption": "The VietAuction landing page introduces the marketplace and its curated digital assets.",
+      "details": [
+        "The platform combines a public-facing presentation with a marketplace experience. The emphasis is on making listings understandable to visitors and giving the auction process a clear place within the product. The preview above shows the visual direction of the landing page, while the source organization provides a closer look at the project.",
+        "The live demo is currently unavailable, so its link is hidden until a working address is available. The source link below remains available for anyone who would like to explore the project further."
+      ]
+    },
+    {
+      "name": "Private Operations Platform",
+      "category": "Private Product · NDA",
+      "description": "A private TypeScript platform that consolidates workforce operations, scheduling, and automated workflows in one focused workspace.",
+      "image": "/portfolio-projects/private-operations-landing.png",
+      "links": [
+        {
+          "label": "Live product",
+          "url": "https://rr-livestream.vercel.app"
+        }
+      ],
+      "introduction": [
+        "Root Rotation is a private livestream operations platform built around the practical work of coordinating people and schedules. Recruitment, staff information, availability, rosters, live operations, payroll and performance review all have a place in the same workspace. Bringing these activities together gives the team a clearer way to follow the work surrounding each livestream.",
+        "The product addresses an operational workflow with several moving parts. Hosts and support staff have different schedules and responsibilities, while payroll requires information from separate sources. My work includes role-based access and availability-driven scheduling for hosts and support staff, with the aim of making those responsibilities easier to manage within the platform."
+      ],
+      "caption": "The public Root Rotation landing page introduces the livestream operations platform.",
+      "details": [
+        "The application uses Next.js App Router, React, TypeScript and Node.js, with REST APIs and Google Sheets and Drive integrations. Alongside scheduling, I implemented payroll reconciliation using TikTok live reports and WiseEye attendance data. These pieces connect routine operational information with the people and sessions it concerns.",
+        "This is a private product covered by an NDA, so the description is limited to the information already presented in my portfolio and CV. The link below opens its public-facing website rather than the private application source."
+      ],
+      "media": "/portfolio-projects/rr-livestream-demo.gif"
+    },
+    {
+      "name": "Fluxora",
+      "category": "Open-source Workflow Automation · Monorepo",
+      "description": "A self-hostable visual workflow platform for building connected automations with secure credentials, inspectable runs, retries, and worker-based execution.",
+      "image": "/portfolio-projects/fluxora-landing.png",
+      "links": [
+        {
+          "label": "Live product",
+          "url": "https://fluxora.io.vn/"
+        },
+        {
+          "label": "Source",
+          "url": "https://github.com/phuuthanh-dev/fluxora/"
+        }
+      ],
+      "introduction": [
+        "Fluxora is an open-source visual workflow automation platform for connecting applications and APIs. Instead of treating each integration as an isolated task, it gives users a visual editor where they can build workflows, configure their connections and follow how work moves from one step to another.",
+        "A workflow can begin with a manual action, a schedule or a webhook and then combine integrations with logic and data-processing steps. The editor is paired with a workspace for managing connections and reviewing executions, making the sequence of actions easier to understand and inspect."
+      ],
+      "caption": "Fluxora’s public landing page introduces its visual workflow automation workspace.",
+      "details": [
+        "The project is organized as a monorepo with a Next.js web application, a NestJS API and shared workflow contracts. A worker handles execution, while PostgreSQL and an optional Redis-backed queue support the application’s operational model. The repository also includes infrastructure for self-hosting.",
+        "Execution history exposes the input and output of individual steps, alongside retries and error paths. Connections use server-side credential storage, so the workflow editor can work with integrations without returning stored secrets to the browser. The public site and repository below provide a starting point for exploring the platform in more detail."
+      ],
+      "media": "/portfolio-projects/fluxora-demo.gif"
+    }
+  ]
+}

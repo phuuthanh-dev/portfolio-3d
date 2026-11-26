@@ -1,0 +1,22 @@
+.project-entry.text-block {
+    margin: 20px 0 8px;
+}
+
+.project-entry + .project-entry {
+    margin-top: 8px;
+}
+
+.project-entry ul {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.project-entry li {
+    margin-bottom: 6px;
+}
+
+.project-media video {
+    display: block;
+    width: 100%;
+    height: auto;
+}
